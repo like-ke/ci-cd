@@ -26,3 +26,20 @@ jobs:
 
       - name: Build Docker Image
         run: docker build -t ci-cd .
+
+    permissions:
+      contents: read
+      packages: write
+                - name: login to GHCR
+                  uses: docker/build-push-action@v3
+                  with:
+                    registry: ghcr.io
+                    username: ${{ github.actor }}
+                    password: ${{ secrets.GITHUB_TOKEN }}
+    
+                - name: Push Docker Image
+                  uses: docker/build-push-action@v3
+                  with:
+                      context: .
+                      push: true
+                      tags: ghcr.io/${{ github.repository_owner }}/ci-cd:latest
